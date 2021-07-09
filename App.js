@@ -1,59 +1,42 @@
-import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
+import { activateKeepAwake } from "expo-keep-awake";  
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-// See https://github.com/awesomejerry/react-native-qrcode-svg
-import SvgQRCode from 'react-native-qrcode-svg';
+import Login     from './src/pages/Login';
+import LerQRcode from './src/pages/LerQRcode';
+// import Movimento from './src/pages/Movimento';
 
-// See https://github.com/eddyoc/react-native-custom-qr-codes-expo
-import { QRCode as CustomQRCode } from 'react-native-custom-qr-codes-expo';
-
-const logoFromFile = require('./assets/logo.png');
-
-
-// Simple usage, defaults for all but the value
-function Simple() {
-  return <SvgQRCode size={150} logo={logoFromFile} value="{valor:'',tipo:'',data:''}" />;
-}
-
-// 20% (default) sized logo from local file string with white logo backdrop
-function LogoFromFile() {
-
-  return <SvgQRCode value="Just some string value" logo={logoFromFile} />;
-}
+const Stack = createStackNavigator();
 
 export default function App() {
+
+  activateKeepAwake();
+  
   return (
-    <View style={styles.container}>
- 
-      <CustomQRCode 
-      logo={logoFromFile}
-      codeStyle="circle" 
-      content="QR code with circles" />
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
 
-      {/* Web preview on Snack seems to inherit the codeStyle from previous call
-          and the linearGradient colours don't change. The gradient doesn't work
-          at all on Android */}
+      <Stack.Screen name="Login" component={Login} 
+          options={{
+            headerShown: false,
+            title: 'Login',
+            headerTransparent: true,
+            headerTintColor: '#000',
+          }}
+        />        
 
-      <CustomQRCode
-        size={180}
-        linearGradient={['red','green']}
-        content="QR code with gradient"
-      />
-      
-      <Simple/>
+        <Stack.Screen name="LerQRcode" component={LerQRcode} 
+          options={{
+            headerShown: false,
+            title: 'LerQRcode',
+            headerTransparent: false,
+            headerTintColor: '#000',
+          }}        
+        />
 
-      <LogoFromFile/>
-
-    </View>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-around',
-    paddingTop: 20,
-    alignItems: 'center',
-    backgroundColor: '#ecf0f1',
-  },
-});
