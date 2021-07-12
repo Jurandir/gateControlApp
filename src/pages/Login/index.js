@@ -72,6 +72,8 @@ export default function Login( { navigation } ) {
 
   const userLogin = () => {
 
+    navigation.navigate('LerQRcode')  
+
   }  
 
   // VISUAL REACT

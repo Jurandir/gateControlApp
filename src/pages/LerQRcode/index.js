@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {  View,           KeyboardAvoidingView, 
+          TextInput,      TouchableOpacity, 
+          Text,           StyleSheet, 
+          Animated,       Keyboard,
+          Alert,          Dimensions, Modal , Button
+           } from 'react-native';
+
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
-export default function App() {
+const deviceWidth = Dimensions.get('window').width
+const reducao     = 140
+
+export default function LerQRcode( { navigation } ) {
+
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+  const [scanned, setScanned]             = useState(false);
 
   useEffect(() => {
     (async () => {
