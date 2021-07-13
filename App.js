@@ -4,9 +4,9 @@ import { activateKeepAwake } from "expo-keep-awake";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Login     from './src/pages/Login';
-import LerQRcode from './src/pages/LerQRcode';
-// import Movimento from './src/pages/Movimento';
+import Login          from './src/pages/Login';
+import LerQRcode      from './src/pages/LerQRcode';
+import MovimentoPatio from './src/pages/MovimentoPatio';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +31,15 @@ export default function App() {
           options={{
             headerShown: false,
             title: 'LerQRcode',
+            headerTransparent: false,
+            headerTintColor: '#000',
+          }}        
+        />
+
+        <Stack.Screen name="MovimentoPatio" component={MovimentoPatio} 
+          options={{
+            headerShown: false,
+            title: 'MovimentoPatio',
             headerTransparent: false,
             headerTintColor: '#000',
           }}        

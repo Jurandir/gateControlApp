@@ -6,10 +6,13 @@ import {  View,           KeyboardAvoidingView,
           Alert,          Dimensions, Modal
            } from 'react-native';
 
+import dados_API from '../../models/dados_API'           
+
 const deviceWidth = Dimensions.get('window').width
 const reducao     = 140
 
-export default function Login( { navigation } ) {
+export default function Login( props ) {
+  let { navigation } = props
 
   const [offset]  = useState(new Animated.ValueXY({x: 0,y: 95}));
   const [opacity] = useState(new Animated.Value(0));
@@ -18,10 +21,34 @@ export default function Login( { navigation } ) {
   const [codigoEmpresa , setCodigoEmpresa]  = useState('');
   const [userName      , setUsername]       = useState('');
   const [userPassword  , setUserpassword]   = useState('');
+  const [labelRotina   , setLabelRotina]    = useState('Controle de Pátio');
+  const [rotina        , setRotina]         = useState(0);
+  let vdados_API
+  let vlogin_inicial
 
   useEffect(()=> {
 
+    vlogin_inicial = {
+      rotina         : 0,
+      empresa        : 20,
+      usuario        : 'SUPERVISOR',
+      CdFuncionario  : 5529,
+      token          : '',
+      createIn       : '',
+      expiresIn      : '',
+    }
+    vdados_API = dados_API()
   })
+
+  const swapRotina = () => {
+    let swap  = rotina == 0 ? 1 : 0
+    let label = swap == 0   ? 'Controle de Pátio' : 'Abastecimento'
+
+    setRotina(swap) 
+    setLabelRotina(label)
+
+    // console.log(rotina,labelRotina,swap,label)
+  }
 
     KeyboardDidShowListener = Keyboard.addListener('keyboardDidShow',keyboardDidShow);
     KeyboardDidHideListener = Keyboard.addListener('keyboardDidHide',keyboardDidHide);
@@ -71,8 +98,20 @@ export default function Login( { navigation } ) {
     }
 
   const userLogin = () => {
+    
+    vlogin_inicial.rotina  = rotina
+    vlogin_inicial.empresa = codigoEmpresa
+    vlogin_inicial.usuario = userName
 
-    navigation.navigate('LerQRcode')  
+    if(rotina==0) {
+      let par_nav = {
+        vdados_API: vdados_API,
+        vlogin_inicial: vlogin_inicial
+      }
+      navigation.navigate('LerQRcode',par_nav)  
+    } else {
+      alert(`Rotina ABASTECIMENTO ainda não implementado !!!`);
+    }  
 
   }  
 
@@ -91,8 +130,12 @@ export default function Login( { navigation } ) {
           />
         </View>
 
-        <Text style={styles.LabelTitulo}>Controle de Pátio</Text>
-
+        <Text 
+          style={styles.LabelTitulo}
+          onPress={swapRotina}
+        >
+          {labelRotina}
+        </Text>
 
         <Animated.View 
         style={[

@@ -1,0 +1,44 @@
+@login_inicial
+rotina         = 0
+empresa        = 20
+usuario        = 'SUPERVISOR'
+CdFuncionario  = 5529
+token          = ''
+createIn       = 
+expiresIn      = 
+
+@dados_API
+servidor                     = '192.168.1.139'
+porta                        = 4999
+endPoint_token               = '/senior/tokenControlePatio'
+endPoint_motorista           = '/senior/motorista'
+endPoint_funcionario         = '/senior/funcionario'
+endPoint_usuario             = '/senior/usuario'
+endPoint_empresa             = '/senior/empresa'
+endPoint_motivoEntradaSaida  = '/senior/motivoEntradaSaida'
+endPoint_veiculo             = '/senior/veiculo'
+endPoint_veiculoEntradaSaida = '/senior/veiculoEntradaSaida'
+endPoint_veiculoPosicaoAtual = '/senior/veiculoPosicaoAtual'
+endPoint_veiculoRegistraES   = '/senior/veiculoRegistraES'
+
+@patil_veiculo
+Base
+data = {}
+
+@patio_movimento
+Base              = "softran_transporte"
+TpMovimento       = "S"
+CdEmpresa         = 20 
+InEntradaSaida    = 1 
+CdFuncionario     = 5814 
+NrPlaca           = "POC1909"
+CdMotorista       = "00046579001372",
+InTpVeiculo       = 0 
+NrHodEntradaSaida = 705110 
+DsVeiculo         = "CAMPO DESCRIÇÃO", 
+CdMotivo          = 1 
+DsObs             = "CAMPO OBSERVAÇÃO - SAIDA TESTE" 
+InCarregado       = 1
+
+@patio_motivo
+[CdMotivo,DsMotivo]
