@@ -21,7 +21,7 @@ endPoint_veiculoEntradaSaida = '/senior/veiculoEntradaSaida'
 endPoint_veiculoPosicaoAtual = '/senior/veiculoPosicaoAtual'
 endPoint_veiculoRegistraES   = '/senior/veiculoRegistraES'
 
-@patil_veiculo
+@patio_veiculo
 Base
 data = {}
 

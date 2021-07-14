@@ -13,51 +13,42 @@ export default function MovimentoPatio( props ) {
   let params           = props.route.params
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalTipo,    setModalTipo]    = useState(false);
   const [placas      , setPlacas]       = useState(null);
   const [motorista   , setMotorista]    = useState(null);
-  const [operacao    , setOperacao]     = useState(null);
-  const [tipoVeiculo , setTipoveiculo]  = useState(null);
+  const [motivo      , setMotivo]       = useState(null);
   const [observacao  , setObservacao]   = useState(null);    
-  const [cartaFrete  , setCartafrete]   = useState(null);    
 
-  const [empresa  , setEmpresa]   = useState(null);    
-  const [codigo   , setCodigo]    = useState(null);    
-  const [emissao  , setEmissao]   = useState(null);    
-  const [fotoAPI  , setFotoAPI]   = useState(0);    
-  const [fotoSCCD , setFotoSCCD]  = useState(0);    
-  const [fotoIDS  , setFotoIDS]   = useState(0);
 
   const [hodometro, setHodometro ] = useState(null);
-  const [labelES  , setLabelES]    = useState('Patil');
+  const [labelES  , setLabelES]    = useState('Patio');
   
   const [vdados_API      , setDdados_API]      = useState({});
   const [vlogin_inicial  , setLogin_inicial]   = useState({});
-  const [vpatil_veiculo  , setPatil_veiculo]   = useState({});
+  const [vpatio_veiculo  , setPatio_veiculo]   = useState({});
   const [vpatio_movimento, setPatio_movimento] = useState({});
 
-
-
   useEffect( () => {
+    console.log('MovimentoPatio: 0')
     setDdados_API(params.vdados_API)
     setLogin_inicial(params.vlogin_inicial)
-    setPatil_veiculo(params.vpatil_veiculo)
+    setPatio_veiculo(params.vpatio_veiculo)
     setPatio_movimento(params.vpatio_movimento)
+    
   }, []);
 
   useEffect( () => {
-    console.log('MovimentoPatio:')
-    setPlacas(vpatil_veiculo.NrPlaca)
-    setHodometro(`${vpatil_veiculo.NrHodAtual}`)
+    console.log('MovimentoPatio: 1')
+    setPlacas(vpatio_veiculo.NrPlaca)
+    setHodometro(`${vpatio_veiculo.NrHodAtual}`)
     setMotorista(vpatio_movimento.CdMotorista)
     setLabelES(vpatio_movimento.DsEntradaSaida)
-
-
-    // console.log('PARAM: useEffect=> MovimentoPatio 1:',params)
-    // console.log('PARAM: useEffect=> MovimentoPatio 2:',vdados_API)
-    // console.log('PARAM: useEffect=> MovimentoPatio 3:',vlogin_inicial)
-    // console.log('PARAM: useEffect=> MovimentoPatio 4:',vpatil_veiculo)
   });
+
+  const confirma = () => {
+    if(motivo==null) {
+      Alert.alert('Motivo não informado !!!')
+    }
+  }
 
 
   // VISUAL REACT
@@ -66,12 +57,8 @@ export default function MovimentoPatio( props ) {
 
         <Text style={styles.title}>{labelES}</Text>
 
-        <Text style={styles.LabelTitulo}>
-            softran_transporte 
-        </Text>
-        <Text style={styles.LabelCartaFrete}>
-          {cartaFrete}
-        </Text>
+        <Text style={styles.LabelTitulo}>softran_transporte</Text>
+        <Text style={styles.LabelCartaFrete}>TESTE 01</Text>
 
         <Text style={styles.LabelText}>Placas:</Text>
         <View style={{flexDirection: 'row'}}>
@@ -110,16 +97,15 @@ export default function MovimentoPatio( props ) {
           onChangeText={(text)=> { setMotorista(text)}}
         />
 
-
         <Text style={styles.LabelText}>Motivo:</Text>
         <View style={{flexDirection: 'row'}}>
         <TextInput
-          value={operacao}
+          value={motivo}
           style={styles.inputModal}
           editable = {false}
           placeholder="Motivo"
           autoCorrect={false}
-          onChangeText={(text)=> { setOperacao(text)}}
+          onChangeText={(text)=> { setMotivo(text)}}
         />
           <TouchableHighlight 
               style={styles.openModal} 
@@ -141,7 +127,7 @@ export default function MovimentoPatio( props ) {
         <View style={styles.containerBTN}>
           <TouchableOpacity 
               style={styles.btnImagens}
-              onPress={ ()=>{} }
+              onPress={ confirma }
           >
             <Text style={styles.submitText}>
                 Confirma
@@ -163,26 +149,12 @@ export default function MovimentoPatio( props ) {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={modalTipo}
-          onRequestClose={() => { Alert.alert("Modal has been closed."); }}
-        >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Tipo Veiculo:</Text>
-
-              </View>
-            </View>
-        </Modal>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
           visible={modalVisible}
           onRequestClose={() => { Alert.alert("Modal has been closed."); }}
         >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>Operação:</Text>
+                <Text style={styles.modalText}>Motivos:</Text>
                 <Button title={'OK'} onPress={() => setModalVisible(!modalVisible)} />
 
               </View>
@@ -341,7 +313,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingVertical: 8,
     borderWidth: 4,
-    borderColor: "#20232a",
+    borderColor: "white",
     width: '90%',
     backgroundColor: "#35AAFF",
     color: "white",

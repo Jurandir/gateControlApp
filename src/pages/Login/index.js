@@ -3,11 +3,14 @@ import {  View,           KeyboardAvoidingView,
           TextInput,      TouchableOpacity, 
           Text,           StyleSheet, 
           Animated,       Keyboard,
-          Alert,          Dimensions, Modal
+          Alert,          Dimensions, 
            } from 'react-native';
 
-import dados_API from '../../models/dados_API'           
-
+import { getData, setData } from '../../utils/dataStorage'; 
+import dados_API            from '../../models/dados_API'
+import GetCredencias        from '../../interface/GetCredencias'
+import login_inicial        from '../../models/login_inicial'
+       
 const deviceWidth = Dimensions.get('window').width
 const reducao     = 140
 
@@ -23,22 +26,32 @@ export default function Login( props ) {
   const [userPassword  , setUserpassword]   = useState('');
   const [labelRotina   , setLabelRotina]    = useState('Controle de Pátio');
   const [rotina        , setRotina]         = useState(0);
-  let vdados_API
-  let vlogin_inicial
+
+  let vdados_API     = dados_API()
+  let vlogin_inicial = login_inicial()
 
   useEffect(()=> {
-
-    vlogin_inicial = {
-      rotina         : 0,
-      empresa        : 20,
-      usuario        : 'SUPERVISOR',
-      CdFuncionario  : 5529,
-      token          : '',
-      createIn       : '',
-      expiresIn      : '',
-    }
-    vdados_API = dados_API()
-  })
+    getData('@login_inicial').then(ret=>{
+        if(ret.success) {
+          
+          vlogin_inicial.empresa       = ret.data.empresa
+          vlogin_inicial.usuario       = ret.data.usuario
+          vlogin_inicial.rotina        = ret.data.rotina
+          vlogin_inicial.token         = ret.data.token
+          vlogin_inicial.CdFuncionario = ret.data.CdFuncionario
+          vlogin_inicial.createIn      = ret.data.createIn
+          vlogin_inicial.expiresIn     = ret.data.expiresIn
+          setCodigoEmpresa(`${vlogin_inicial.empresa}`)
+          setUsername(vlogin_inicial.usuario)
+          setRotina(vlogin_inicial.rotina)
+      
+        } else {
+          setCodigoEmpresa(`${vlogin_inicial.empresa}`)
+          setUsername(vlogin_inicial.usuario)
+          setRotina(vlogin_inicial.rotina)      
+        }
+    })
+  },[])
 
   const swapRotina = () => {
     let swap  = rotina == 0 ? 1 : 0
@@ -99,18 +112,42 @@ export default function Login( props ) {
 
   const userLogin = () => {
     
-    vlogin_inicial.rotina  = rotina
+    vlogin_inicial.rotina  = rotina || 0
     vlogin_inicial.empresa = codigoEmpresa
     vlogin_inicial.usuario = userName
 
     if(rotina==0) {
-      let par_nav = {
-        vdados_API: vdados_API,
-        vlogin_inicial: vlogin_inicial
-      }
-      navigation.navigate('LerQRcode',par_nav)  
+      GetCredencias(vdados_API,codigoEmpresa,userName,userPassword).then((ret)=>{
+        if(ret.success) {
+
+            vlogin_inicial.token     = ret.token.Bearer
+            vlogin_inicial.createIn  = ret.token.createIn
+            vlogin_inicial.expiresIn = ret.token.expiresIn
+
+            let par_nav = {
+              vdados_API: vdados_API,
+              vlogin_inicial: vlogin_inicial
+            }
+            
+            setData('@login_inicial',vlogin_inicial).then(ret=>{
+              if(ret.success){
+                navigation.navigate('LerQRcode',par_nav)
+              } else {
+                Alert.alert(`Erro interno (setData @login_inicial) !!!`);
+              }
+            })
+
+          } else {
+            Alert.alert(`MSG: ${ret.message}`);
+        }
+  
+      }).catch((err)=>{
+        console.log('GetCredencias ERR',err)
+        Alert.alert(`ERR: ${err.message}`);
+      })
+
     } else {
-      alert(`Rotina ABASTECIMENTO ainda não implementado !!!`);
+      Alert.alert(`Rotina ABASTECIMENTO ainda não implementado !!!`);
     }  
 
   }  
