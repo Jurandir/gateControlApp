@@ -3,20 +3,20 @@ const patio_motivo = () => {
       data: [
          {
            CdMotivo: 1,
-           DsMotivo: "DESCARREGAR",
-           DsApelido: "DESCARREGA",
+           DsMotivo: "DESCARREGAR *",
+           DsApelido: "DESCARREGA *",
            InTipoDocMotivoES: 0
          },
          {
            CdMotivo: 2,
-           DsMotivo: "ENTREGA",
-           DsApelido: "ENTREGA",
+           DsMotivo: "ENTREGA *",
+           DsApelido: "ENTREGA *",
            InTipoDocMotivoES: 0
          },
          {
            CdMotivo: 3,
-           DsMotivo: "MANUTENÇÃO",
-           DsApelido: "MANUTENÇÃO",
+           DsMotivo: "MANUTENÇÃO *",
+           DsApelido: "MANUTENÇÃO *",
            InTipoDocMotivoES: 2
          }
        ],

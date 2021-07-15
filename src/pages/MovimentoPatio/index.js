@@ -1,12 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import { AntDesign } from '@expo/vector-icons';
-import {  Alert,          View,
-          Modal,          SafeAreaView,
-          TextInput,      TouchableOpacity,
-          TouchableHighlight,          Text, 
-          StyleSheet , Button
-             } from 'react-native';
+import {  Alert,     View,      Modal, SafeAreaView,       Text, 
+          TextInput, TouchableOpacity, TouchableHighlight, StyleSheet 
+       } from 'react-native';
 
+import SetRegistroES from '../../interface/SetRegistroES'
 
 export default function MovimentoPatio( props ) {
   const { navigation } = props 
@@ -16,50 +14,146 @@ export default function MovimentoPatio( props ) {
   const [placas      , setPlacas]       = useState(null);
   const [motorista   , setMotorista]    = useState(null);
   const [motivo      , setMotivo]       = useState(null);
-  const [observacao  , setObservacao]   = useState(null);    
+  const [CdMotivo    , setCdMotivo]     = useState(null);
+  const [observacao  , setObservacao]   = useState('');
+  const [btnConfirma , setBtnConfirma]  = useState(false)
 
 
   const [hodometro, setHodometro ] = useState(null);
   const [labelES  , setLabelES]    = useState('Patio');
+  const [Base     , setBase]       = useState(null);
+  const [aviso    , setAviso]      = useState('');
   
   const [vdados_API      , setDdados_API]      = useState({});
   const [vlogin_inicial  , setLogin_inicial]   = useState({});
   const [vpatio_veiculo  , setPatio_veiculo]   = useState({});
   const [vpatio_movimento, setPatio_movimento] = useState({});
+  const [vpatio_motivo,    setPatio_motivo]    = useState({});
 
   useEffect( () => {
-    console.log('MovimentoPatio: 0')
     setDdados_API(params.vdados_API)
     setLogin_inicial(params.vlogin_inicial)
     setPatio_veiculo(params.vpatio_veiculo)
     setPatio_movimento(params.vpatio_movimento)
-    
+    setPatio_motivo(params.vpatio_motivo)
+    setBtnConfirma(true)    
   }, []);
 
   useEffect( () => {
-    console.log('MovimentoPatio: 1')
     setPlacas(vpatio_veiculo.NrPlaca)
     setHodometro(`${vpatio_veiculo.NrHodAtual}`)
     setMotorista(vpatio_movimento.CdMotorista)
     setLabelES(vpatio_movimento.DsEntradaSaida)
-  });
+    setBase(vpatio_veiculo.Base)
+  },[vpatio_veiculo.Base]);
 
-  const confirma = () => {
-    if(motivo==null) {
-      Alert.alert('Motivo não informado !!!')
-    }
+  function paddy(num, padlen, padchar) {
+    var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
+    var pad = new Array(1 + padlen).join(pad_char);
+    return (pad + num).slice(-pad.length);
   }
 
+  // Confirmação do registro ES
+  const confirma = () => {
+    Alert.alert('Confirmação:', `Registra ${labelES} do veiculo ${placas} ?`,
+    [{
+      text: 'SIM',
+      onPress: confirmaRegistro,
+      style: 'default'
+    },{
+      text: 'NÃO',
+      onPress: () => {},
+      style: 'default'
+    }],
+    { cancelable: false })
+  }
 
-  // VISUAL REACT
+  // Registra EouS
+  const confirmaRegistro = () => {
+    let cpf  = parseInt(motorista)
+    let sCpf = paddy(cpf,14)
+    let tipo_es = `${labelES}`.substr(0,1)
+
+    setMotorista(sCpf)
+
+    if(motivo==null) {
+      Alert.alert('Motivo não informado !!!')
+      return 0
+    }
+
+    let params = {
+      Base:              Base,
+      TpMovimento:       tipo_es,
+      CdEmpresa:         vlogin_inicial.empresa, 
+      InEntradaSaida:    ( tipo_es=='E' ? 1 : 0 ), 
+      CdFuncionario:     vlogin_inicial.CdFuncionario, 
+      NrPlaca:           vpatio_veiculo.NrPlaca,
+      CdMotorista:       motorista,
+      InTpVeiculo:       0, 
+      NrHodEntradaSaida: hodometro, 
+      DsVeiculo:         `Placa: ${placas}`, 
+      CdMotivo:          CdMotivo, 
+      DsObs:             observacao, 
+      InCarregado:       0
+    }
+
+    setAviso('Registrando...')
+
+    SetRegistroES(vdados_API,vlogin_inicial,params).then(ret=>{
+        setAviso('')
+        if(ret.success) {
+          setLabelES('Confirmado')
+          setBtnConfirma(false)
+        } else {
+          Alert.alert('Aviso:', ret.message )
+        }     
+    }).catch((err)=>{
+        setAviso('')
+        Alert.alert('Erro:', err.message )
+    })
+
+  }
+
+    // =================================== TELA MODAL TIPO DE OPERAÇÃO
+    function ItemModalMotivo(props) {
+      function OnPressOperacao(DsApelido,CdMotivo) {
+        console.log('>',DsApelido,CdMotivo)
+        setMotivo(DsApelido);
+        setCdMotivo(CdMotivo);
+        setModalVisible(!modalVisible);
+      }   
+      return (
+          <TouchableHighlight
+              style={{ ...styles.buttonModal, backgroundColor: "#2196F3" }}
+              onPress={()=>{OnPressOperacao(props.DsApelido,props.CdMotivo)}}
+            >
+          <Text style={styles.textStyle}>{props.DsMotivo}</Text>
+        </TouchableHighlight>
+      )
+    }
+
+    // ==================================== LOOP MOTIVOS
+    function LoopMotivos() {
+        return (
+            <View style={styles.modalView}> 
+               <Text style={styles.modalText}>Motivos:</Text>
+               {vpatio_motivo.data.map(r => {
+                  return <ItemModalMotivo key={r.CdMotivo} CdMotivo={r.CdMotivo} DsMotivo={r.DsMotivo} DsApelido={r.DsApelido}/>
+                }
+              )}
+            </View>
+        )
+    }
+
+  // ==================================================== VISUAL REACT =========================================
   return (
     <SafeAreaView style={styles.background}>
 
         <Text style={styles.title}>{labelES}</Text>
+        <Text style={styles.LabelTitulo}>{Base}</Text>
+        <Text style={styles.LabelAviso}>{aviso}</Text>
 
-        <Text style={styles.LabelTitulo}>softran_transporte</Text>
-        <Text style={styles.LabelCartaFrete}>TESTE 01</Text>
-
+        { /* ================= Placas */}
         <Text style={styles.LabelText}>Placas:</Text>
         <View style={{flexDirection: 'row'}}>
         <TextInput
@@ -78,25 +172,32 @@ export default function MovimentoPatio( props ) {
           </TouchableHighlight>
         </View>
 
+        { /* ================= Hodômetro */}
         <Text style={styles.LabelText}>Hodômetro:</Text>
         <TextInput
           value={hodometro}
           style={styles.input}
+          keyboardType='numeric'
+          maxLength={10}
           placeholder="Hodômetro"
           autoCorrect={false}
           onChangeText={(text)=> { setHodometro(text)}}
         />
 
+        { /* ================= Motorista */}
         <Text style={styles.LabelText}>CPF do Motorista:</Text>
         <TextInput
           value={motorista}
           style={styles.input}
-          editable = {false}
+          editable = {true}
+          keyboardType='numeric'
+          maxLength={14}
           placeholder="CPF do Motorista"
           autoCorrect={false}
           onChangeText={(text)=> { setMotorista(text)}}
         />
 
+        { /* ================= Motivo */}
         <Text style={styles.LabelText}>Motivo:</Text>
         <View style={{flexDirection: 'row'}}>
         <TextInput
@@ -115,6 +216,7 @@ export default function MovimentoPatio( props ) {
           </TouchableHighlight>
         </View>
 
+        { /* ================= Observações */}
         <Text style={styles.LabelText}>Observações:</Text>
         <TextInput
           value={observacao}
@@ -124,7 +226,9 @@ export default function MovimentoPatio( props ) {
           onChangeText={(text)=> { setObservacao(text)}}
         />
 
+        { /* ================= Buttons ( Confirma & Sair ) */}
         <View style={styles.containerBTN}>
+          { btnConfirma &&
           <TouchableOpacity 
               style={styles.btnImagens}
               onPress={ confirma }
@@ -132,8 +236,8 @@ export default function MovimentoPatio( props ) {
             <Text style={styles.submitText}>
                 Confirma
             </Text>
-
           </TouchableOpacity>
+          }
 
           <TouchableOpacity 
               style={styles.btnSair}
@@ -153,12 +257,9 @@ export default function MovimentoPatio( props ) {
           onRequestClose={() => { Alert.alert("Modal has been closed."); }}
         >
             <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Motivos:</Text>
-                <Button title={'OK'} onPress={() => setModalVisible(!modalVisible)} />
-
-              </View>
+                <LoopMotivos />
             </View>
+
       </Modal>
 
     </SafeAreaView>
@@ -263,8 +364,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 12
   },
-  LabelCartaFrete:{
-    color: '#FFF',
+  LabelAviso:{
+    color: 'yellow',
     textAlign: "center",
     marginTop: 0,
     fontSize: 30
@@ -294,7 +395,8 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "white",
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    
   },
   modalText: {
     fontSize: 20,

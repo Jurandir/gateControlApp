@@ -9,6 +9,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import GetVeiculo      from '../../interface/GetVeiculo'
 import GetPosicaoAtual from '../../interface/GetPosicaoAtual'
 import GetUsuario      from '../../interface/GetUsuario'
+import GetMotivosES    from '../../interface/GetMotivosES'
 
 import patio_motivo        from '../../models/patio_motivo'
 import patio_veiculo       from '../../models/patio_veiculo'
@@ -81,13 +82,17 @@ export default function LerQRcode( props ) {
       return
     }
 
+    // -- Inverte posição atual ( Entrada <==> Saída )
+    let tipo_es     = posicao.data[0].InEntradaSaida==1 ? 0 : 1
+    let ds_tipo_es  = tipo_es == 0 ? 'Entrada' : 'Saída'
+
     vpatio_movimento.NrHodAtual       = posicao.data[0].NrHodAtual
     vpatio_movimento.CdEmpresa        = posicao.data[0].CdEmpresa
     vpatio_movimento.DsEmpresa        = posicao.data[0].DsEmpresa
     vpatio_movimento.DtEntradaSaida   = posicao.data[0].DtEntradaSaida
     vpatio_movimento.HrEntradaSaida   = posicao.data[0].HrEntradaSaida
-    vpatio_movimento.InEntradaSaida   = posicao.data[0].InEntradaSaida
-    vpatio_movimento.DsEntradaSaida   = posicao.data[0].DsEntradaSaida
+    vpatio_movimento.InEntradaSaida   = tipo_es
+    vpatio_movimento.DsEntradaSaida   = ds_tipo_es
     vpatio_movimento.CdMotivo         = posicao.data[0].CdMotivo
     vpatio_movimento.DsMotivo         = posicao.data[0].DsMotivo
     vpatio_movimento.CdMotorista      = posicao.data[0].CdMotorista
@@ -103,6 +108,12 @@ export default function LerQRcode( props ) {
 
     vpatio_movimento.CdFuncionario    = funcionario.data[0].CdFuncionario
     vpatio_movimento.DsFuncionario    = posicao.data[0].DsApelido
+
+    // ============= ATUALIZAR OS MOTIVOS
+
+    // vpatio_motivo
+    let motivo = await GetMotivosES (vdados_API,vlogin_inicial,vpatio_veiculo)
+    vpatio_motivo.data = motivo.data
 
     // ============== MONTA PARAMETROS DE NAVEGAÇÃO
     let par_nav = {
