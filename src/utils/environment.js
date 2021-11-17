@@ -1,7 +1,7 @@
-const API_SERVER      = '192.168.1.138' // '192.168.0.45' //'192.168.0.153' //'192.168.0.31'  // ''
-const API_PORTA       = '5000'
-const API_SERV_UPLOAD = '192.168.1.138' // '192.168.0.45' // '192.168.0.153' 
-const API_PORT_UPLOAD = '5000' 
+const API_SERVER      = '192.168.0.153' // '192.168.0.45' //'192.168.0.153' //'192.168.0.31'  // '192.168.1.138'
+const API_PORTA       = '4999'
+const API_SERV_UPLOAD = '192.168.0.153' // '192.168.0.45' // '192.168.0.153' 
+const API_PORT_UPLOAD = '4999' 
 
 const environment = {
     API_AD:               `http://${API_SERVER}:${API_PORTA}/api/loginad`,
@@ -11,6 +11,8 @@ const environment = {
     API_UPLOAD:           `http://${API_SERV_UPLOAD}:${API_PORT_UPLOAD}/file/upload`,
     API_CHECKIMG:         `http://${API_SERVER}:${API_PORTA}/api/checkimgsccd`,
     API_DADOSAPP:         `http://${API_SERVER}:${API_PORTA}/api/receiveDataDebugAPP`,
+    server:               `${API_SERVER}`,
+    port:                 `${API_PORTA}`,
 }
 
 export default environment

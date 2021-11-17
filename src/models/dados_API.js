@@ -1,7 +1,7 @@
 const dados_API = () => {
     let config = {
-        servidor                     : '192.168.1.139',
-        porta                        : 4999,
+        servidor                     : '192.168.0.153',
+        porta                        : '4999',
         endPoint_token               : '/senior/tokenControlePatio',
         endPoint_motorista           : '/senior/motorista',
         endPoint_funcionario         : '/senior/funcionario',

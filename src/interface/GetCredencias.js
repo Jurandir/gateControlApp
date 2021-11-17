@@ -14,8 +14,12 @@ const GetCredencias = (dados_API,empresa,usuario,senha) => {
         }
 
        try {
+
+        // console.log('Server:',server,endpoint,params)
         
-        retorno = await LoadAPI(method,endpoint,server,params)           
+        retorno = await LoadAPI(method,endpoint,server,params)      
+        
+        // console.log('retorno:',retorno)
         
         resolve(retorno)
 
