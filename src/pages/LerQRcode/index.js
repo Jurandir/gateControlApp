@@ -27,9 +27,17 @@ export default function LerQRcode( props ) {
 
   let vdados_API       = params.vdados_API
   let vlogin_inicial   = params.vlogin_inicial
+  let vRotina          = params.vRotina
   let vpatio_motivo    = patio_motivo()
   let vpatio_veiculo   = patio_veiculo()
   let vpatio_movimento = patio_movimento()
+
+  console.log('Rotina',vRotina)
+
+  /*
+
+
+  */
 
   useEffect(() => {
 

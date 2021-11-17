@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login          from './src/pages/Login';
 import LerQRcode      from './src/pages/LerQRcode';
 import MovimentoPatio from './src/pages/MovimentoPatio';
+import MovimentoPosto from './src/pages/MovimentoPosto';
 
 const Stack = createStackNavigator();
 
@@ -40,6 +41,15 @@ export default function App() {
           options={{
             headerShown: false,
             title: 'MovimentoPatio',
+            headerTransparent: false,
+            headerTintColor: '#000',
+          }}        
+        />
+
+        <Stack.Screen name="MovimentoPosto" component={MovimentoPosto} 
+          options={{
+            headerShown: false,
+            title: 'MovimentoPosto',
             headerTransparent: false,
             headerTintColor: '#000',
           }}        

@@ -116,8 +116,8 @@ export default function Login( props ) {
     vlogin_inicial.empresa = codigoEmpresa
     vlogin_inicial.usuario = userName
 
-    if(rotina==0) {
-      GetCredencias(vdados_API,codigoEmpresa,userName,userPassword).then((ret)=>{
+    
+    GetCredencias(vdados_API,codigoEmpresa,userName,userPassword).then((ret)=>{
         if(ret.success) {
 
             vlogin_inicial.token     = ret.token.Bearer
@@ -126,12 +126,13 @@ export default function Login( props ) {
 
             let par_nav = {
               vdados_API: vdados_API,
-              vlogin_inicial: vlogin_inicial
+              vlogin_inicial: vlogin_inicial,
+              vRotina: rotina
             }
             
             setData('@login_inicial',vlogin_inicial).then(ret=>{
               if(ret.success){
-                navigation.navigate('LerQRcode',par_nav)
+                   navigation.navigate('LerQRcode',par_nav)             
               } else {
                 Alert.alert(`Erro interno (setData @login_inicial) !!!`);
               }
@@ -145,10 +146,6 @@ export default function Login( props ) {
         console.log('GetCredencias ERR',err)
         Alert.alert(`ERR: ${err.message}`);
       })
-
-    } else {
-      Alert.alert(`Rotina ABASTECIMENTO ainda não implementado !!!`);
-    }  
 
   }  
 
